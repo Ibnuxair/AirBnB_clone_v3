@@ -40,8 +40,8 @@ class TestDBStorageDocs(unittest.TestCase):
     def test_pep8_conformance_test_db_storage(self):
         """Test tests/test_models/test_db_storage.py conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_db_storage.py'])
+        result = pep8s.check_files(
+            ['tests/test_models/test_engine/test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
@@ -86,3 +86,52 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_existing_object(self):
+        """Test retrieving an existing object"""
+        db_storage = DBStorage()
+
+        new_user = User(name="John Doe")
+        db_storage.new(new_user)
+        db_storage.save()
+
+        # Retrieve the added object by ID
+        retrieved_user = db_storage.get(User, new_user.id)
+        self.assertEqual(retrieved_user, new_user)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_non_existing_object(self):
+        """Test retrieving a non-existing object"""
+        db_storage = DBStorage()
+
+        non_existing_user = db_storage.get(User, "non_existing_id")
+        self.assertIsNone(non_existing_user)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_specific_class(self):
+        """Test counting objects for a specific class"""
+        db_storage = DBStorage()
+
+        for _ in range(5):
+            new_user = User(name="John Doe")
+            db_storage.new(new_user)
+            db_storage.save()
+
+        users_count = db_storage.count(User)
+        self.assertEqual(users_count, 5)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_all_classes(self):
+        """Test counting objects for all classes"""
+        db_storage = DBStorage()
+
+        for _ in range(3):
+            new_user = User(name="John Doe")
+            new_place = Place(name="Apartment")
+            db_storage.new(new_user)
+            db_storage.new(new_place)
+            db_storage.save()
+
+        total_objects_count = db_storage.count()
+        self.assertEqual(total_objects_count, 6)
