@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Get the status of the API."""
 
-from flask import Flask
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 import os
@@ -15,6 +15,11 @@ def teardown_storage(exception):
     """Close the storage when the app context ends"""
     storage.close()
 
+# Handler for 404 errors
+@app.errorhandler(404)
+def not_found(error):
+    """Returns a JSON-formatted 404 status code response."""
+    return jsonify({"error": "Not found"}), 404
 
 if __name__ == '__main__':
     host = os.getenv('HBNB_API_HOST', '0.0.0.0')
