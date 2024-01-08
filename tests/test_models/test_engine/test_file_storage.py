@@ -40,8 +40,8 @@ class TestFileStorageDocs(unittest.TestCase):
     def test_pep8_conformance_test_file_storage(self):
         """Test tests/test_models/test_file_storage.py conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_file_storage.py'])
+        result = pep8s.check_files(
+            ['tests/test_models/test_engine/test_file_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
@@ -113,3 +113,35 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_existing_object(self):
+        """Test retrieving an existing object"""
+        storage = FileStorage()
+        new_user = User(name="John Doe")
+        storage.new(new_user)
+        storage.save()
+
+        # Retrieve the added object by ID
+        retrieved_user = storage.get(User, new_user.id)
+        self.assertEqual(retrieved_user, new_user)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_non_existing_object(self):
+        """Test retrieving a non-existing object"""
+        storage = FileStorage()
+        non_existing_user = storage.get(User, "non_existing_id")
+        self.assertIsNone(non_existing_user)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_specific_class(self):
+        """Test counting objects for a specific class"""
+        storage = FileStorage()
+        storage._FileStorage__objects = {}
+        for _ in range(5):
+            new_user = User(name="John Doe")
+            storage.new(new_user)
+            storage.save()
+
+        users_count = storage.count(User)
+        self.assertEqual(users_count, 5)
