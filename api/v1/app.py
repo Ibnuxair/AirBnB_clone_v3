@@ -15,7 +15,6 @@ def teardown_storage(exception):
     """Close the storage when the app context ends"""
     storage.close()
 
-# Handler for 404 errors
 @app.errorhandler(404)
 def not_found(error):
     """Returns a JSON-formatted 404 status code response."""
@@ -24,4 +23,4 @@ def not_found(error):
 if __name__ == '__main__':
     host = os.getenv('HBNB_API_HOST', '0.0.0.0')
     port = int(os.getenv('HBNB_API_PORT', 5000))
-    app.run(host=host, port=port, threaded=True)
+    app.run(host=host, port=port, debug=True, threaded=True)
