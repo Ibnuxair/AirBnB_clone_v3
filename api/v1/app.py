@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """
-Get the status of the API.
+This module initializes and configures the Flask application for the API.
+
+It sets up routes, error handling, and CORS confi.
 """
 
 from flask_cors import CORS
