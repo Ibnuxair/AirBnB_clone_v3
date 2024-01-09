@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-"""Handles RESTful API actions for User objects."""
+"""
+Handles RESTful API actions for User objects.
+"""
+
 from flask import jsonify, abort, request
 from models import storage
 from . import app_views
