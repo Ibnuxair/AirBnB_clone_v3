@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""Get the status of the API."""
+"""
+Get the status of the API.
+"""
 
 from flask import Flask, jsonify
 from models import storage
